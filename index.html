@@ -32,7 +32,6 @@
             }
         }
     </script>
-
     <style>
         :root {
             --primary-bg: #1a1a2e;
@@ -43,6 +42,7 @@
             --text-muted: #666666;
             --border-color: #e1e1e1;
             --success-color: #28a745;
+            --success-bg: rgba(40, 167, 69, 0.08);
         }
 
         body { 
@@ -169,7 +169,7 @@
         /* --- Market Prices Box --- */
         .market-prices-box {
             background: #eef2f5;
-            padding: 15px;
+            padding: 20px;
             border-radius: 6px;
             border: 1px dashed var(--muhro-blue);
             margin-bottom: 20px;
@@ -181,7 +181,7 @@
             font-weight: 700;
             color: var(--muhro-blue);
             font-size: 0.9rem;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 5px;
         }
@@ -236,14 +236,6 @@
             font-size: 0.9rem;
         }
 
-        .grand-total-row {
-            background: var(--muhro-blue);
-            color: #ffffff;
-            border: none;
-            margin-top: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
         .item-icon {
             width: 24px;
             height: 24px;
@@ -262,8 +254,6 @@
             color: var(--text-main);
             font-size: 0.9rem;
         }
-
-        .grand-total-row .material-name-container { color: #ffffff; }
 
         hr { border: 0; border-top: 2px dashed var(--border-color); margin: 25px 0; }
 
@@ -425,34 +415,43 @@
 
         <div class="checkbox-group">
             <input type="checkbox" id="breakdownMats" class="calc-input">
-            <label for="breakdownMats">Show recursive raw materials breakdown & calculate total Zeny cost</label>
+            <label for="breakdownMats">Compare Market Prices (Crafting vs Buying Directly)</label>
         </div>
 
         <div id="marketPricesConfig" class="market-prices-box">
-            <div class="title">Market Prices (For Grand Total Calculation)</div>
+            <div class="title">Market Price Configuration</div>
             
-            <div class="form-row" id="wrapBSB" style="margin-bottom: 10px; display: none;">
-                <div class="form-group" style="margin-bottom:0;">
-                    <label id="labelBSB" style="font-size: 0.85rem; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;"></label>
-                    <input type="text" inputmode="numeric" id="priceBSB" class="calc-input price-input" value="8,500,000">
+            <div class="form-row" style="margin-bottom: 15px;">
+                <div class="form-group" style="margin-bottom:0; flex: 1.2;">
+                    <label id="labelFinalMat" style="font-size: 0.85rem; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;"></label>
+                    <input type="text" inputmode="numeric" id="priceFinalMat" class="calc-input price-input-format" value="0" placeholder="Price to buy direct...">
                 </div>
-            </div>
-            <div class="form-row" style="margin-bottom: 0;">
-                <div class="form-group" style="margin-bottom:0;">
-                    <label id="labelDust" style="font-size: 0.85rem; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;"></label>
-                    <input type="text" inputmode="numeric" id="priceDust" class="calc-input price-input" value="0">
-                </div>
-                <div class="form-group" style="margin-bottom:0;">
-                    <label id="labelGem" style="font-size: 0.85rem; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;"></label>
-                    <input type="text" inputmode="numeric" id="priceGem" class="calc-input price-input" value="0">
-                </div>
-            </div>
-            <div class="form-row" id="wrapBaseGear" style="margin-top: 10px; margin-bottom: 0; display: none;">
-                <div class="form-group" style="margin-bottom:0;">
+                <div class="form-group" style="margin-bottom:0; flex: 1; display: none;" id="wrapBaseGear">
                     <label style="font-size: 0.85rem; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
                         <span title="The current market price of a clean replacement gear if it breaks" style="border-bottom: 1px dotted var(--text-muted); cursor: help; font-weight: 700; color: var(--muhro-blue);">Base Gear Duplicate</span>
                     </label>
-                    <input type="text" inputmode="numeric" id="priceBase" class="calc-input price-input" value="0">
+                    <input type="text" inputmode="numeric" id="priceBase" class="calc-input price-input-format" value="0">
+                </div>
+            </div>
+
+            <hr style="border-top: 1px dashed #ccc; margin: 15px 0;">
+            <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase;">Raw Ingredients (For Crafting)</div>
+
+            <div class="form-row" style="margin-bottom: 10px;">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label id="labelDust" style="font-size: 0.85rem; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;"></label>
+                    <input type="text" inputmode="numeric" id="priceDust" class="calc-input price-input-format" value="0">
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label id="labelGem" style="font-size: 0.85rem; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;"></label>
+                    <input type="text" inputmode="numeric" id="priceGem" class="calc-input price-input-format" value="0">
+                </div>
+            </div>
+            
+            <div class="form-row" id="wrapBSB" style="margin-top: 10px; margin-bottom: 0; display: none;">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label id="labelBSB" style="font-size: 0.85rem; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;"></label>
+                    <input type="text" inputmode="numeric" id="priceBSB" class="calc-input price-input-format" value="8,500,000">
                 </div>
             </div>
         </div>
@@ -460,21 +459,32 @@
         <div id="calculatorUI" style="display: none;">
             <hr>
             
+            <div id="compareContainer" style="display:none; margin-bottom: 25px;">
+                <div class="results-title" style="text-align: center; border: none; font-size: 1.1rem; margin-bottom: 15px;">Cost Comparison Strategy</div>
+                <div style="display: flex; gap: 15px;">
+                    <div id="optA_box" style="flex: 1; padding: 15px; border-radius: 8px; border: 2px solid var(--border-color); background: var(--card-bg); text-align: center; transition: all 0.3s;">
+                        <div style="font-weight: 700; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">Option A: Craft Materials</div>
+                        <div id="optA_Total" style="font-size: 1.25rem; font-weight: 700; color: var(--muhro-blue); margin: 8px 0;">0 z</div>
+                        <div id="optA_Breakdown" style="font-size: 0.75rem; color: var(--text-muted); line-height: 1.4;"></div>
+                    </div>
+                    <div id="optB_box" style="flex: 1; padding: 15px; border-radius: 8px; border: 2px solid var(--border-color); background: var(--card-bg); text-align: center; transition: all 0.3s;">
+                        <div style="font-weight: 700; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">Option B: Buy Directly</div>
+                        <div id="optB_Total" style="font-size: 1.25rem; font-weight: 700; color: var(--muhro-blue); margin: 8px 0;">0 z</div>
+                        <div id="optB_Breakdown" style="font-size: 0.75rem; color: var(--text-muted); line-height: 1.4;"></div>
+                    </div>
+                </div>
+            </div>
+
             <div class="results-wrapper">
                 <div class="results-col" id="directCol">
-                    <div class="results-title">Expected Materials Needed</div>
+                    <div class="results-title">Expected Preparation Needed</div>
                     <div id="directMaterialsContainer"></div>
                 </div>
                 
                 <div class="results-col" id="rawCol" style="display: none;">
-                    <div class="results-title">Recursive Raw Breakdown</div>
+                    <div class="results-title">Recursive Crafting Breakdown</div>
                     <div id="rawMaterialsContainer"></div>
                 </div>
-            </div>
-
-            <div id="grandTotalContainer" style="display:none; margin-top: 20px; background: var(--muhro-blue); color: #fff; padding: 15px; border-radius: 8px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
-                <div style="font-family: 'Montserrat', sans-serif; font-size: 1.2rem; font-weight: 700;">Grand Total Equivalent: <span id="grandTotalAmount" style="color: var(--muhro-accent);"></span></div>
-                <div style="font-size: 0.85rem; margin-top: 8px; opacity: 0.9;" id="grandTotalBreakdown"></div>
             </div>
             
             <div id="returnsContainer" style="margin-top: 20px; display: none;">
@@ -503,7 +513,7 @@
         <span class="modal-close" id="closeHelpModal">&times;</span>
         <h2 class="modal-title">How Grade Enhancing Works</h2>
         <div class="modal-body">
-            <p>This tool calculates the <strong>Average Expected Cost</strong> to successfully enhance your equipment's Grade (Lv 5 Weapons / Lv 2 Armors) on MuhRO.</p>
+            <p>This tool calculates the <strong>Prepared Expected Cost</strong> to successfully enhance your equipment's Grade (Lv 5 Weapons / Lv 2 Armors) on MuhRO.</p>
             
             <h4>1. Current Refine Level</h4>
             <p>Your equipment must meet a minimum refine requirement to be graded (+9 for Grade D, +10 for Grade C, +11 for Grades B & A). Grading your item while it is at <strong>+16 or higher</strong> grants an invisible +10% bonus to success rates and returns extra Blessed Etel Dust if you fail!</p>
@@ -515,11 +525,11 @@
                 <li><strong>Risky Method:</strong> You use standard 1x materials without forcing 100%. If you fail, your item will be permanently destroyed. The calculator will estimate how many duplicated Base Gears you need to sacrifice to eventually succeed.</li>
             </ul>
 
-            <h4>3. Market Prices & Grand Total</h4>
-            <p>By checking the recursive breakdown box, you can input the current market prices for raw ingredients. The calculator will automatically combine the Base Grading Zeny, the Crafting Zeny, and the Market Prices into one highly accurate <strong>Grand Total Zeny</strong> estimate!</p>
+            <h4>3. Real Preparation Math</h4>
+            <p>Unlike standard math that calculates fraction values (e.g. 3.33 attempts), this calculator utilizes <strong>Discrete Attempt Rounding</strong>. If the math says you need 3.33 attempts to succeed on average, the calculator will instruct you to bring exactly enough materials and Zeny to perform <strong>4 whole attempts</strong> so you don't run out halfway through!</p>
 
-            <h4>4. Expected Returns</h4>
-            <p>When grading fails, the NPC usually feels bad and refunds you a few pieces of Blessed Etel Dust. The calculator automatically estimates how many you will receive back during your failed attempts!</p>
+            <h4>4. Market Price Comparison</h4>
+            <p>By checking the comparison box, you can input current market prices. The calculator will automatically pit the <strong>Crafting Strategy</strong> against the <strong>Direct Buy Strategy</strong> and highlight the cheapest option in green!</p>
         </div>
     </div>
 </div>
@@ -541,7 +551,6 @@
         return res;
     }
 
-    // Fully Recursive Breakdown logic
     function resolveBaseMaterials(itemName, amount = 1, breakdown = false) {
         let res = {};
         if (itemName === 'Zeny') {
@@ -561,8 +570,7 @@
         return res;
     }
 
-    // Helper to extract ID, fetch MuhRO Icon, and build clickable Link
-    function formatItemName(rawName, withIcon = true) {
+    function formatItemName(rawName, withIcon = true, explicitTip = null) {
         let match = rawName.match(/^(.*?)\s*\((\d+)\)$/);
         
         if (match) {
@@ -576,9 +584,11 @@
                 iconHtml = `<img src="${matIconUrl}" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 6px; border: 1px solid var(--border-color); border-radius: 4px; background-color: #f4f4f4;" onerror="this.style.display='none'">`;
             }
             
+            let tooltip = explicitTip ? explicitTip : `Click to check market price for ${itemName}`;
+
             return `
                 ${iconHtml}
-                <a href="${matDbLink}" class="market-label-link" target="_blank" title="Click to check market price for ${itemName}">
+                <a href="${matDbLink}" class="market-label-link" target="_blank" title="${tooltip}">
                     ${itemName}
                 </a>
             `;
@@ -588,13 +598,11 @@
     }
 
     $(document).ready(function() {
-        // Static Market Labels Initialization
-        $('#labelBSB').html(formatItemName("Blacksmith's Blessing (6635)", true));
+        $('#labelBSB').html(formatItemName("Blessed Etel Dust / BSB (6635)", true, "Price applies to both Blessed Etel Dust or BSB directly"));
         $('#labelDust').html(formatItemName("Etel Dust (1000322)", true));
 
-        // Format Market Price Inputs with Commas Dynamically
-        $('.price-input').on('input', function() {
-            let rawValue = $(this).val().replace(/\D/g, ''); // Strip everything but numbers
+        $('.price-input-format').on('input', function() {
+            let rawValue = $(this).val().replace(/\D/g, ''); 
             if (rawValue !== '') {
                 $(this).val(parseInt(rawValue, 10).toLocaleString('en-US'));
             } else {
@@ -602,7 +610,6 @@
             }
         });
 
-        // Modal Event Listeners
         $('#openHelpModal').on('click', function(e) {
             e.preventDefault();
             $('#helpModal').fadeIn(200);
@@ -614,7 +621,6 @@
             if ($(e.target).is('#helpModal')) $('#helpModal').fadeOut(200);
         });
 
-        // Toggle Market Price Config Wrapper
         $('#breakdownMats').on('change', function() {
             if ($(this).is(':checked')) {
                 $('#marketPricesConfig').slideDown(200);
@@ -623,7 +629,6 @@
             }
         });
 
-        // Toggle Specific Inputs Based on Strategy
         $('#strategy').on('change', function() {
             let strat = $(this).val();
             if (strat === 'guaranteed') {
@@ -640,7 +645,36 @@
         
         $('#strategy').trigger('change');
 
-        // Event trigger for calculation
+        // --- NEW: Dynamic Minimum Refine Handling ---
+        $('#gradeProcess').on('change', function() {
+            let process = $(this).val();
+            let minRefine = Math.min(...gradingRules.filter(r => r.process === process).map(r => r.req_refine));
+            
+            let $refineInput = $('#currentRefine');
+            $refineInput.attr('min', minRefine);
+            
+            let currentVal = parseInt($refineInput.val()) || 0;
+            if (currentVal < minRefine) {
+                $refineInput.val(minRefine);
+            }
+            calculate();
+        });
+
+        // Hard clamp logic if they try to type or delete
+        $('#currentRefine').on('change blur', function() {
+            let process = $('#gradeProcess').val();
+            let minRefine = Math.min(...gradingRules.filter(r => r.process === process).map(r => r.req_refine));
+            let currentVal = parseInt($(this).val());
+            
+            if (isNaN(currentVal) || currentVal < minRefine) {
+                $(this).val(minRefine);
+                calculate();
+            }
+        });
+
+        // Trigger min setup on initialization
+        $('#gradeProcess').trigger('change');
+
         $('.calc-input').on('change input', calculate);
         calculate(); 
     });
@@ -651,9 +685,16 @@
         let strategy = $('#strategy').val();
         let breakdown = $('#breakdownMats').is(':checked');
 
-        // Update Dynamic Gem Label Based on Current Process
         let requiredGemName = gemRequirementMap[process];
         $('#labelGem').html(formatItemName(requiredGemName, true));
+
+        let matchingRulesTemp = gradingRules.filter(r => r.process === process && r.req_refine <= refine);
+        if(matchingRulesTemp.length > 0) {
+            let bestReq = matchingRulesTemp.sort((a,b) => b.req_refine - a.req_refine)[0].req_refine;
+            let tempRule = matchingRulesTemp.find(r => r.req_refine === bestReq);
+            let finalMatObj = tempRule.mats.find(m => m.material !== 'Zeny');
+            $('#labelFinalMat').html(formatItemName(finalMatObj.material, true) + " <span style='font-size: 0.75rem; color: var(--text-muted);'>(End Tier)</span>");
+        }
 
         $('#directMaterialsContainer').empty();
         $('#rawMaterialsContainer').empty();
@@ -662,23 +703,26 @@
 
         if (isNaN(refine) || refine < 0) return;
 
-        if (breakdown) $('#rawCol').show();
-        else $('#rawCol').hide();
+        if (breakdown) {
+            $('#rawCol').show();
+            $('#compareContainer').show();
+        } else {
+            $('#rawCol').hide();
+            $('#compareContainer').hide();
+        }
 
-        let matchingRules = gradingRules.filter(r => r.process === process && r.req_refine <= refine);
-        
-        if (matchingRules.length === 0) {
+        if (matchingRulesTemp.length === 0) {
             let minRefine = Math.min(...gradingRules.filter(r => r.process === process).map(r => r.req_refine));
             return renderError(`Refine level +${refine} is too low to perform <strong>${process}</strong>. The minimum required refine is +${minRefine}.`);
         }
 
-        let bestRuleReqRefine = matchingRules.sort((a,b) => b.req_refine - a.req_refine)[0].req_refine;
+        let bestRuleReqRefine = matchingRulesTemp.sort((a,b) => b.req_refine - a.req_refine)[0].req_refine;
 
         let rule;
         if (strategy === 'safe') {
-            rule = matchingRules.find(r => r.req_refine === bestRuleReqRefine && r.is_safe === true);
+            rule = matchingRulesTemp.find(r => r.req_refine === bestRuleReqRefine && r.is_safe === true);
         } else {
-            rule = matchingRules.find(r => r.req_refine === bestRuleReqRefine && r.is_safe === false);
+            rule = matchingRulesTemp.find(r => r.req_refine === bestRuleReqRefine && r.is_safe === false);
         }
 
         let base_chance = rule.base_chance;
@@ -695,27 +739,32 @@
             dust_for_100 = steps_of_10 * dust_per_10;
         }
 
-        let fails_avg = 0;
+        let expected_attempts = 1 / base_chance;
+        let prepared_attempts = Math.ceil(expected_attempts);
+        let fails_avg = 0; 
+        let prepared_fails = 0; 
         let mats_multiplier = 1;
         let expected_dust_needed = 0;
         let expected_returns = {};
         let equipment_destroyed = 0;
 
         if (strategy === 'guaranteed') {
-            fails_avg = 0; 
+            prepared_attempts = 1;
             mats_multiplier = 1; 
             expected_dust_needed = dust_for_100; 
             
         } else if (strategy === 'safe') {
-            fails_avg = (1 - base_chance) / base_chance;
-            mats_multiplier = 1 + fails_avg;
-            expected_returns['Blessed Etel Dust (1000337)'] = fails_avg * dust_returned;
+            fails_avg = expected_attempts - 1;
+            prepared_fails = prepared_attempts - 1;
+            mats_multiplier = prepared_attempts;
+            expected_returns['Blessed Etel Dust (1000337)'] = prepared_fails * dust_returned;
             
         } else if (strategy === 'risk') {
-            fails_avg = (1 - base_chance) / base_chance;
-            mats_multiplier = 1 + fails_avg;
-            expected_returns['Blessed Etel Dust (1000337)'] = fails_avg * dust_returned;
-            equipment_destroyed = fails_avg;
+            fails_avg = expected_attempts - 1;
+            prepared_fails = prepared_attempts - 1;
+            mats_multiplier = prepared_attempts;
+            expected_returns['Blessed Etel Dust (1000337)'] = prepared_fails * dust_returned;
+            equipment_destroyed = prepared_fails;
         }
 
         let total_dir = {};
@@ -737,7 +786,6 @@
             total_raw['Base Gear (Destroyed)'] = equipment_destroyed;
         }
 
-        // Generate the standard HTML lists
         $('#directMaterialsContainer').html(buildHTMLList(total_dir, false));
         $('#rawMaterialsContainer').html(buildHTMLList(total_raw, false));
 
@@ -748,43 +796,62 @@
             $('#returnsContainer').hide();
         }
 
-        // --- Grand Total Calculation ---
         if (breakdown) {
-            // Strip out the commas mathematically before calculating!
+            let pFinalMat = parseInt($('#priceFinalMat').val().replace(/,/g, '')) || 0;
             let pBSB = parseInt($('#priceBSB').val().replace(/,/g, '')) || 0;
             let pDust = parseInt($('#priceDust').val().replace(/,/g, '')) || 0;
             let pGem = parseInt($('#priceGem').val().replace(/,/g, '')) || 0;
             let pBase = parseInt($('#priceBase').val().replace(/,/g, '')) || 0;
 
-            let matsMarketCost = 0;
+            let mainMatName = rule.mats.find(m => m.material !== 'Zeny').material;
+
+            // Option B (Buy Direct)
+            let optB_MatsCost = 0;
+            for (let k in total_dir) {
+                if (k === 'Zeny') continue;
+                let q = total_dir[k];
+                if (k === mainMatName) optB_MatsCost += q * pFinalMat;
+                if (k.includes("Blessed Etel Dust")) optB_MatsCost += q * pBSB;
+                if (k.includes("Base Gear")) optB_MatsCost += q * pBase;
+            }
+            let optB_BaseZeny = total_dir['Zeny'] || 0;
+            let optB_Total = optB_BaseZeny + optB_MatsCost;
+
+            // Option A (Craft Materials)
+            let optA_MatsCost = 0;
             for (let k in total_raw) {
                 if (k === 'Zeny') continue;
-                let ceilVal = Math.ceil(total_raw[k]);
-                
-                if (strategy === 'guaranteed' && k.includes("Blacksmith's Blessing")) {
-                    matsMarketCost += ceilVal * pBSB;
-                }
-                else if (strategy === 'risk' && k.includes("Base Gear")) {
-                    matsMarketCost += ceilVal * pBase;
-                }
-                else if (k.includes("Etel Dust")) {
-                    matsMarketCost += ceilVal * pDust;
-                }
-                else if (k.includes("Aquamarine") || k.includes("Topaz") || k.includes("Amethyst") || k.includes("Amber")) {
-                    matsMarketCost += ceilVal * pGem;
-                }
+                let q = total_raw[k];
+                if (k.includes("Etel Dust")) optA_MatsCost += q * pDust;
+                if (k === requiredGemName) optA_MatsCost += q * pGem;
+                if (k.includes("Blacksmith's Blessing") || k.includes("Blessed Etel Dust")) optA_MatsCost += q * pBSB;
+                if (k.includes("Base Gear")) optA_MatsCost += q * pBase;
             }
+            let optA_TotalRawZeny = total_raw['Zeny'] || 0;
+            let optA_Total = optA_TotalRawZeny + optA_MatsCost;
 
-            let baseZeny = Math.round(total_dir['Zeny'] || 0);
-            let totalRawZeny = Math.round(total_raw['Zeny'] || 0);
-            let craftingZeny = totalRawZeny - baseZeny;
-            let grandTotal = totalRawZeny + matsMarketCost;
+            $('#optA_Total').text(optA_Total.toLocaleString() + ' z');
+            $('#optA_Breakdown').html(`(Craft & NPC Fee: ${optA_TotalRawZeny.toLocaleString()} z <br> Raw Items: ${optA_MatsCost.toLocaleString()} z)`);
+            
+            // --- NEW: Safe Highlight Logic Handling Unavailable Options ---
+            if (pFinalMat > 0) {
+                $('#optB_Total').text(optB_Total.toLocaleString() + ' z');
+                $('#optB_Breakdown').html(`(NPC Fee: ${optB_BaseZeny.toLocaleString()} z <br> End Tier Items: ${optB_MatsCost.toLocaleString()} z)`);
 
-            $('#grandTotalAmount').text(grandTotal.toLocaleString() + ' z');
-            $('#grandTotalBreakdown').html(`(Grading NPC Fee: ${baseZeny.toLocaleString()} z &nbsp;|&nbsp; Crafting Fee: ${craftingZeny.toLocaleString()} z &nbsp;|&nbsp; Market Items: ${matsMarketCost.toLocaleString()} z)`);
-            $('#grandTotalContainer').show();
-        } else {
-            $('#grandTotalContainer').hide();
+                if (optA_Total <= optB_Total) {
+                    $('#optA_box').css({'border-color': 'var(--success-color)', 'background': 'var(--success-bg)'});
+                    $('#optB_box').css({'border-color': 'var(--border-color)', 'background': 'var(--card-bg)'});
+                } else {
+                    $('#optB_box').css({'border-color': 'var(--success-color)', 'background': 'var(--success-bg)'});
+                    $('#optA_box').css({'border-color': 'var(--border-color)', 'background': 'var(--card-bg)'});
+                }
+            } else {
+                $('#optB_Total').text('N/A');
+                $('#optB_Breakdown').html(`(No market price set for End Tier material)`);
+                // Force highlight Option A since Option B is unavailable
+                $('#optA_box').css({'border-color': 'var(--success-color)', 'background': 'var(--success-bg)'});
+                $('#optB_box').css({'border-color': 'var(--border-color)', 'background': 'var(--card-bg)'});
+            }
         }
         
         let logMsg = `<div style="margin-bottom: 6px;"><strong>Process:</strong> ${process} @ Refine +${refine}</div>`;
@@ -793,9 +860,9 @@
         if (strategy === 'guaranteed') {
             let bonusAmount = ((1 - base_chance) * 100).toFixed(0);
             logMsg += `<div style="margin-bottom: 6px; color: var(--success-color);"><strong>Bonus Success Chance:</strong> +${bonusAmount}% (Cost: ${dust_for_100}x Blessed Dust)</div>`;
-            logMsg += `<div style="margin-bottom: 6px;"><strong>Expected Failures:</strong> 0 (100% Guaranteed Success)</div>`;
+            logMsg += `<div style="margin-bottom: 6px;"><strong>Prepared Attempts:</strong> 1 (100% Guaranteed Success)</div>`;
         } else {
-            logMsg += `<div style="margin-bottom: 6px; color: var(--muhro-accent);"><strong>Expected Failures Before Success:</strong> ${fails_avg.toFixed(2)}</div>`;
+            logMsg += `<div style="margin-bottom: 6px; color: var(--muhro-accent);"><strong>Prepared Attempts:</strong> ${prepared_attempts} (Rounded up to guarantee success on average)</div>`;
             logMsg += `<div style="margin-bottom: 6px;"><strong>Penalty on Fail:</strong> ${rule.penalty}</div>`;
         }
         
@@ -807,7 +874,7 @@
         $('#directMaterialsContainer').html(`<div class="error-message">${msg}</div>`);
         $('#rawMaterialsContainer').empty();
         $('#rawCol').hide();
-        $('#grandTotalContainer').hide();
+        $('#compareContainer').hide();
         $('#returnsContainer').hide();
         $('#logContainer').empty();
         $('#calculatorUI').fadeIn();
@@ -838,11 +905,9 @@
             if (k === 'Zeny') {
                 valStr = Math.round(rawVal).toLocaleString() + ' z';
             } else {
-                let ceilVal = Math.ceil(rawVal);
-                valStr = ceilVal.toLocaleString();
+                valStr = Math.ceil(rawVal).toLocaleString();
             }
             
-            // Re-using formatItemName for the list view but wrapped safely for flexbox
             let displayItem = `<div class="material-name-container">${formatItemName(k, true)}</div>`;
             
             html += `
