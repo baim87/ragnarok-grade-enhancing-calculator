@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MuhRO Grade Enhancing Calculator</title>
+    <meta name="description" content="Calculate Ragnarok grade enhancement success rates, required materials, and total upgrade cost. Plan smarter, reduce risk, and optimize your gear upgrades with accurate probability simulation.">
+    <meta name="keywords" content="ragnarok grade enhance, ragnarok grade enhancement calculator, ragnarok upgrade simulator, ragnarok success rate calculator, ragnarok gear upgrade tool">
+    <meta name="author" content="HolySoul88">
+    
+    <link rel="icon" type="image/x-icon" href="./favicon.ico" />
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "name": "Ragnarok Grade Enhancing Calculator",
+            "url": "https://baim87.github.io/ragnarok-grade-enhancing-calculator",
+            "description": "A calculator tool for Ragnarok players to simulate grade enhancement success rates, required materials, and total upgrade costs.",
+            "applicationCategory": "GameApplication",
+            "operatingSystem": "Any",
+            "browserRequirements": "Requires JavaScript",
+            "inLanguage": "en",
+            "isAccessibleForFree": true,
+            "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --primary-bg: #1a1a2e;
+            --card-bg: #ffffff;
+            --muhro-blue: #0f3460;
+            --muhro-accent: #e94560;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --border-color: #e1e1e1;
+            --success-color: #28a745;
+        }
+
+        body { 
+            font-family: 'Nunito', sans-serif; 
+            background-color: var(--primary-bg); 
+            background-image: radial-gradient(circle at top, #16213e, #1a1a2e);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .calculator-card { 
+            background: var(--card-bg); 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .header h1 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--muhro-blue);
+            margin: 0;
+            font-size: 1.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+        }
+
+        .header span {
+            color: var(--muhro-accent);
+            font-weight: 600;
+        }
+
+        .help-link {
+            display: inline-block;
+            margin-top: 5px;
+            font-size: 0.85rem;
+            color: var(--muhro-accent);
+            text-decoration: none;
+            border-bottom: 1px dashed var(--muhro-accent);
+            transition: opacity 0.2s;
+            cursor: pointer;
+        }
+
+        .help-link:hover { opacity: 0.7; }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group { flex: 1; margin-bottom: 20px; }
+        .form-row .form-group { margin-bottom: 0; }
+        
+        label { 
+            display: block; 
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600; 
+            margin-bottom: 8px; 
+            color: var(--muhro-blue); 
+            font-size: 0.95rem;
+        }
+
+        select, input[type="number"], input[type="text"] { 
+            width: 100%; 
+            padding: 10px 12px; 
+            border: 2px solid var(--border-color); 
+            border-radius: 6px; 
+            box-sizing: border-box; 
+            font-family: 'Nunito', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: border-color 0.2s;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--muhro-accent);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .checkbox-group input {
+            width: 18px;
+            height: 18px;
+            margin-right: 12px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            margin-bottom: 0;
+            font-family: 'Nunito', sans-serif;
+            cursor: pointer;
+            color: var(--text-main);
+            font-size: 0.9rem;
+        }
+
+        /* --- Market Prices Box --- */
+        .market-prices-box {
+            background: #eef2f5;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px dashed var(--muhro-blue);
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .market-prices-box .title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            color: var(--muhro-blue);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+        }
+
+        .market-label-link {
+            color: var(--muhro-blue);
+            text-decoration: none;
+            border-bottom: 1px dashed var(--muhro-blue);
+            transition: opacity 0.2s;
+            font-weight: 700;
+        }
+
+        .market-label-link:hover { opacity: 0.7; }
+
+        .results-wrapper {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .results-col { flex: 1; }
+
+        .results-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            color: var(--muhro-blue);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 5px;
+        }
+
+        .returns-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            color: var(--success-color);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--success-color);
+            padding-bottom: 5px;
+        }
+
+        .material-row { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: #f8f9fa; 
+            padding: 10px 12px; 
+            margin-bottom: 6px; 
+            border-radius: 6px; 
+            border: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        .grand-total-row {
+            background: var(--muhro-blue);
+            color: #ffffff;
+            border: none;
+            margin-top: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .item-icon {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+            margin-right: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: #f4f4f4;
+        }
+        
+        .material-name-container { 
+            display: flex;
+            align-items: center;
+            flex-grow: 1; 
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 0.9rem;
+        }
+
+        .grand-total-row .material-name-container { color: #ffffff; }
+
+        hr { border: 0; border-top: 2px dashed var(--border-color); margin: 25px 0; }
+
+        .other-tools {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px dashed var(--border-color);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .other-tools a {
+            display: inline-block;
+            margin: 4px 8px;
+            color: var(--muhro-blue);
+            text-decoration: none;
+            font-weight: 700;
+            font-family: 'Montserrat', sans-serif;
+            border-bottom: 1px dashed var(--muhro-blue);
+            transition: color 0.2s, border-color 0.2s;
+        }
+
+        .other-tools a:hover {
+            color: var(--muhro-accent);
+            border-color: var(--muhro-accent);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #a0a0b0;
+            font-size: 0.85rem;
+        }
+        
+        .footer .heart { color: var(--muhro-accent); font-size: 1.1rem; vertical-align: middle; }
+        .footer .author { font-weight: 600; color: #ffffff; letter-spacing: 0.5px; }
+
+        #logContainer {
+            background: #fdfdfd;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 0.9rem;
+            margin-top: 15px;
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
+        
+        .error-message {
+            color: var(--muhro-accent);
+            font-weight: 700;
+            text-align: center;
+            padding: 15px;
+            background: #ffe5e5;
+            border-radius: 6px;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(15, 52, 96, 0.7);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            margin: 8% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 550px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+            position: relative;
+            animation: modalSlideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px; right: 20px;
+            color: var(--text-muted);
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover { color: var(--muhro-accent); }
+
+        .modal-title {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--muhro-blue);
+            margin-top: 0;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 15px;
+            font-size: 1.4rem;
+        }
+
+        .modal-body {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-main);
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .modal-body::-webkit-scrollbar { width: 6px; }
+        .modal-body::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        .modal-body::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+        .modal-body::-webkit-scrollbar-thumb:hover { background: var(--muhro-accent); }
+        .modal-body p { margin-bottom: 12px; }
+        .modal-body h4 { color: var(--muhro-accent); margin-bottom: 5px; font-family: 'Montserrat', sans-serif; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="calculator-card">
+        
+        <div class="header">
+            <h1>MuhRO <span>Grade Enhancing</span></h1>
+            <a class="help-link" id="openHelpModal">How to use this calculator?</a>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group" style="flex: 2;">
+                <label>Target Grading Process</label>
+                <select id="gradeProcess" class="calc-input">
+                    <option value="No Grade → Grade D">No Grade → Grade D</option>
+                    <option value="Grade D → Grade C">Grade D → Grade C</option>
+                    <option value="Grade C → Grade B">Grade C → Grade B</option>
+                    <option value="Grade B → Grade A">Grade B → Grade A</option>
+                </select>
+            </div>
+            <div class="form-group" style="flex: 1;">
+                <label>Current Refine</label>
+                <input type="number" id="currentRefine" class="calc-input" min="9" max="20" value="9">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Grading Strategy</label>
+            <select id="strategy" class="calc-input">
+                <option value="safe">Safe Method (Multiplied Base Materials, No Destruction)</option>
+                <option value="guaranteed">Guaranteed Method (100% Success using Blessed Etel Dust)</option>
+                <option value="risk">Risky Method (1x Base Materials, Equipment Destroyed on Fail)</option>
+            </select>
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="breakdownMats" class="calc-input">
+            <label for="breakdownMats">Show recursive raw materials breakdown & calculate total Zeny cost</label>
+        </div>
+
+        <div id="marketPricesConfig" class="market-prices-box">
+            <div class="title">Market Prices (For Grand Total Calculation)</div>
+            
+            <div class="form-row" id="wrapBSB" style="margin-bottom: 10px; display: none;">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label id="labelBSB" style="font-size: 0.85rem; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;"></label>
+                    <input type="text" inputmode="numeric" id="priceBSB" class="calc-input price-input" value="8,500,000">
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 0;">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label id="labelDust" style="font-size: 0.85rem; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;"></label>
+                    <input type="text" inputmode="numeric" id="priceDust" class="calc-input price-input" value="0">
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label id="labelGem" style="font-size: 0.85rem; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;"></label>
+                    <input type="text" inputmode="numeric" id="priceGem" class="calc-input price-input" value="0">
+                </div>
+            </div>
+            <div class="form-row" id="wrapBaseGear" style="margin-top: 10px; margin-bottom: 0; display: none;">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label style="font-size: 0.85rem; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                        <span title="The current market price of a clean replacement gear if it breaks" style="border-bottom: 1px dotted var(--text-muted); cursor: help; font-weight: 700; color: var(--muhro-blue);">Base Gear Duplicate</span>
+                    </label>
+                    <input type="text" inputmode="numeric" id="priceBase" class="calc-input price-input" value="0">
+                </div>
+            </div>
+        </div>
+
+        <div id="calculatorUI" style="display: none;">
+            <hr>
+            
+            <div class="results-wrapper">
+                <div class="results-col" id="directCol">
+                    <div class="results-title">Expected Materials Needed</div>
+                    <div id="directMaterialsContainer"></div>
+                </div>
+                
+                <div class="results-col" id="rawCol" style="display: none;">
+                    <div class="results-title">Recursive Raw Breakdown</div>
+                    <div id="rawMaterialsContainer"></div>
+                </div>
+            </div>
+
+            <div id="grandTotalContainer" style="display:none; margin-top: 20px; background: var(--muhro-blue); color: #fff; padding: 15px; border-radius: 8px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+                <div style="font-family: 'Montserrat', sans-serif; font-size: 1.2rem; font-weight: 700;">Grand Total Equivalent: <span id="grandTotalAmount" style="color: var(--muhro-accent);"></span></div>
+                <div style="font-size: 0.85rem; margin-top: 8px; opacity: 0.9;" id="grandTotalBreakdown"></div>
+            </div>
+            
+            <div id="returnsContainer" style="margin-top: 20px; display: none;">
+                <div class="returns-title">Expected Returns (From Failures)</div>
+                <div id="returnsList"></div>
+            </div>
+
+            <label style="margin-top: 25px;">Process Statistics</label>
+            <div id="logContainer"></div>
+        </div>
+
+        <div class="other-tools">
+            Check out my other tools:<br>
+            <a href="https://baim87.github.io/ragnarok-refinement-calculator/" target="_blank">Refinement Calculator</a>
+            <a href="https://baim87.github.io/ragnarok-consumable-calculator/" target="_blank">Consumable Calculator</a>
+        </div>
+    </div>
+
+    <div class="footer">
+        Created with <span class="heart">&hearts;</span> by <span class="author">HolySoul88</span>
+    </div>
+</div>
+
+<div id="helpModal" class="modal-overlay">
+    <div class="modal-content">
+        <span class="modal-close" id="closeHelpModal">&times;</span>
+        <h2 class="modal-title">How Grade Enhancing Works</h2>
+        <div class="modal-body">
+            <p>This tool calculates the <strong>Average Expected Cost</strong> to successfully enhance your equipment's Grade (Lv 5 Weapons / Lv 2 Armors) on MuhRO.</p>
+            
+            <h4>1. Current Refine Level</h4>
+            <p>Your equipment must meet a minimum refine requirement to be graded (+9 for Grade D, +10 for Grade C, +11 for Grades B & A). Grading your item while it is at <strong>+16 or higher</strong> grants an invisible +10% bonus to success rates and returns extra Blessed Etel Dust if you fail!</p>
+
+            <h4>2. The Three Strategies</h4>
+            <ul>
+                <li><strong>Safe Method:</strong> You feed the NPC a massive multiplier of materials (usually 5x to 10x). If the grade fails, your equipment survives safely, but the materials are lost.</li>
+                <li><strong>Guaranteed Method:</strong> You use the standard 1x materials, but you additionally inject enough <strong>Blessed Etel Dust (1000337)</strong> to force a 100% success rate. The item will never break.</li>
+                <li><strong>Risky Method:</strong> You use standard 1x materials without forcing 100%. If you fail, your item will be permanently destroyed. The calculator will estimate how many duplicated Base Gears you need to sacrifice to eventually succeed.</li>
+            </ul>
+
+            <h4>3. Market Prices & Grand Total</h4>
+            <p>By checking the recursive breakdown box, you can input the current market prices for raw ingredients. The calculator will automatically combine the Base Grading Zeny, the Crafting Zeny, and the Market Prices into one highly accurate <strong>Grand Total Zeny</strong> estimate!</p>
+
+            <h4>4. Expected Returns</h4>
+            <p>When grading fails, the NPC usually feels bad and refunds you a few pieces of Blessed Etel Dust. The calculator automatically estimates how many you will receive back during your failed attempts!</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const costsData = {"Etel Stone (1000323)": [[{"material": "Zeny", "amount": 100000}, {"material": "Etel Dust (1000322)", "amount": 5}]], "Blessed Etel Dust (1000337)": [[{"material": "Zeny", "amount": 100000}, {"material": "Etel Dust (1000322)", "amount": 5}, {"material": "Blacksmith's Blessing (6635)", "amount": 1}]], "Etel Aquamarine (1000325)": [[{"material": "Zeny", "amount": 100000}, {"material": "Etel Stone (1000323)", "amount": 3}, {"material": "Aquamarine (720)", "amount": 1}]], "Etel Topaz (1000326)": [[{"material": "Zeny", "amount": 200000}, {"material": "Etel Stone (1000323)", "amount": 6}, {"material": "Topaz (728)", "amount": 1}]], "Etel Amethyst (1000327)": [[{"material": "Zeny", "amount": 300000}, {"material": "Etel Stone (1000323)", "amount": 10}, {"material": "Amethyst (719)", "amount": 1}]], "Etel Amber (1000328)": [[{"material": "Zeny", "amount": 500000}, {"material": "Etel Stone (1000323)", "amount": 15}, {"material": "Amber (1000321)", "amount": 1}]]};
+    const gradingRules = [{"process": "No Grade → Grade D", "req_refine": 9, "mats": [{"material": "Etel Aquamarine (1000325)", "amount": 1}, {"material": "Zeny", "amount": 100000}], "base_chance": 0.2, "dust_per_10": 2, "dust_for_100": 16, "dust_returned": 1, "penalty": "Equipment Destroyed", "is_safe": false}, {"process": "No Grade → Grade D", "req_refine": 10, "mats": [{"material": "Etel Aquamarine (1000325)", "amount": 1}, {"material": "Zeny", "amount": 100000}], "base_chance": 0.3, "dust_per_10": 2, "dust_for_100": 14, "dust_returned": 2, "penalty": "Equipment Destroyed", "is_safe": false}, {"process": "No Grade → Grade D", "req_refine": 11, "mats": [{"material": "Etel Aquamarine (1000325)", "amount": 1}, {"material": "Zeny", "amount": 100000}], "base_chance": 0.7, "dust_per_10": 2, "dust_for_100": 6, "dust_returned": 3, "penalty": "Equipment Destroyed", "is_safe": false}, {"process": "No Grade → Grade D", "req_refine": 9, "mats": [{"material": "Etel Aquamarine (1000325)", "amount": 5}, {"material": "Zeny", "amount": 500000}], "base_chance": 0.2, "dust_per_10": 2, "dust_for_100": 16, "dust_returned": 1, "penalty": "-", "is_safe": true}, {"process": "No Grade → Grade D", "req_refine": 10, "mats": [{"material": "Etel Aquamarine (1000325)", "amount": 5}, {"material": "Zeny", "amount": 500000}], "base_chance": 0.3, "dust_per_10": 2, "dust_for_100": 14, "dust_returned": 2, "penalty": "-", "is_safe": true}, {"process": "No Grade → Grade D", "req_refine": 11, "mats": [{"material": "Etel Aquamarine (1000325)", "amount": 5}, {"material": "Zeny", "amount": 500000}], "base_chance": 0.7, "dust_per_10": 2, "dust_for_100": 6, "dust_returned": 3, "penalty": "-", "is_safe": true}, {"process": "Grade D → Grade C", "req_refine": 10, "mats": [{"material": "Etel Topaz (1000326)", "amount": 1}, {"material": "Zeny", "amount": 125000}], "base_chance": 0.3, "dust_per_10": 3, "dust_for_100": 21, "dust_returned": 2, "penalty": "Equipment Destroyed", "is_safe": false}, {"process": "Grade D → Grade C", "req_refine": 11, "mats": [{"material": "Etel Topaz (1000326)", "amount": 1}, {"material": "Zeny", "amount": 125000}], "base_chance": 0.6, "dust_per_10": 3, "dust_for_100": 12, "dust_returned": 3, "penalty": "Equipment Destroyed", "is_safe": false}, {"process": "Grade D → Grade C", "req_refine": 10, "mats": [{"material": "Etel Topaz (1000326)", "amount": 5}, {"material": "Zeny", "amount": 625000}], "base_chance": 0.3, "dust_per_10": 3, "dust_for_100": 21, "dust_returned": 2, "penalty": "-", "is_safe": true}, {"process": "Grade D → Grade C", "req_refine": 11, "mats": [{"material": "Etel Topaz (1000326)", "amount": 5}, {"material": "Zeny", "amount": 625000}], "base_chance": 0.6, "dust_per_10": 3, "dust_for_100": 12, "dust_returned": 3, "penalty": "-", "is_safe": true}, {"process": "Grade C → Grade B", "req_refine": 11, "mats": [{"material": "Etel Amethyst (1000327)", "amount": 1}, {"material": "Zeny", "amount": 200000}], "base_chance": 0.5, "dust_per_10": 5, "dust_for_100": 25, "dust_returned": 4, "penalty": "Equipment Destroyed", "is_safe": false}, {"process": "Grade C → Grade B", "req_refine": 11, "mats": [{"material": "Etel Amethyst (1000327)", "amount": 5}, {"material": "Zeny", "amount": 1000000}], "base_chance": 0.5, "dust_per_10": 5, "dust_for_100": 25, "dust_returned": 4, "penalty": "-", "is_safe": true}, {"process": "Grade B → Grade A", "req_refine": 11, "mats": [{"material": "Etel Amber (1000328)", "amount": 2}, {"material": "Zeny", "amount": 500000}], "base_chance": 0.4, "dust_per_10": 7, "dust_for_100": 42, "dust_returned": 5, "penalty": "Equipment Destroyed", "is_safe": false}, {"process": "Grade B → Grade A", "req_refine": 11, "mats": [{"material": "Etel Amber (1000328)", "amount": 10}, {"material": "Zeny", "amount": 2500000}], "base_chance": 0.4, "dust_per_10": 7, "dust_for_100": 42, "dust_returned": 5, "penalty": "-", "is_safe": true}];
+
+    const gemRequirementMap = {
+        "No Grade → Grade D": "Aquamarine (720)",
+        "Grade D → Grade C": "Topaz (728)",
+        "Grade C → Grade B": "Amethyst (719)",
+        "Grade B → Grade A": "Amber (1000321)"
+    };
+
+    function addCost(a, b) {
+        let res = {...a};
+        for(let k in b) res[k] = (res[k] || 0) + b[k];
+        return res;
+    }
+
+    // Fully Recursive Breakdown logic
+    function resolveBaseMaterials(itemName, amount = 1, breakdown = false) {
+        let res = {};
+        if (itemName === 'Zeny') {
+            res['Zeny'] = amount;
+            return res;
+        }
+        
+        if (breakdown && costsData[itemName]) {
+            let recipe = costsData[itemName][0]; 
+            for(let r of recipe) {
+                let sub = resolveBaseMaterials(r.material, r.amount * amount, breakdown);
+                res = addCost(res, sub);
+            }
+        } else {
+            res[itemName] = amount;
+        }
+        return res;
+    }
+
+    // Helper to extract ID, fetch MuhRO Icon, and build clickable Link
+    function formatItemName(rawName, withIcon = true) {
+        let match = rawName.match(/^(.*?)\s*\((\d+)\)$/);
+        
+        if (match) {
+            let itemName = match[1];
+            let itemId = match[2];
+            let matDbLink = `https://flux.muhro.eu/?module=item&action=view&id=${itemId}`;
+            
+            let iconHtml = '';
+            if (withIcon) {
+                let matIconUrl = `https://flux.muhro.eu/data/zrenderer_cache/item%2Ficon%2F${itemId}.png`;
+                iconHtml = `<img src="${matIconUrl}" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 6px; border: 1px solid var(--border-color); border-radius: 4px; background-color: #f4f4f4;" onerror="this.style.display='none'">`;
+            }
+            
+            return `
+                ${iconHtml}
+                <a href="${matDbLink}" class="market-label-link" target="_blank" title="Click to check market price for ${itemName}">
+                    ${itemName}
+                </a>
+            `;
+        }
+        
+        return `<span style="font-weight: 700;">${rawName}</span>`;
+    }
+
+    $(document).ready(function() {
+        // Static Market Labels Initialization
+        $('#labelBSB').html(formatItemName("Blacksmith's Blessing (6635)", true));
+        $('#labelDust').html(formatItemName("Etel Dust (1000322)", true));
+
+        // Format Market Price Inputs with Commas Dynamically
+        $('.price-input').on('input', function() {
+            let rawValue = $(this).val().replace(/\D/g, ''); // Strip everything but numbers
+            if (rawValue !== '') {
+                $(this).val(parseInt(rawValue, 10).toLocaleString('en-US'));
+            } else {
+                $(this).val('');
+            }
+        });
+
+        // Modal Event Listeners
+        $('#openHelpModal').on('click', function(e) {
+            e.preventDefault();
+            $('#helpModal').fadeIn(200);
+        });
+        $('#closeHelpModal').on('click', function() {
+            $('#helpModal').fadeOut(200);
+        });
+        $(window).on('click', function(e) {
+            if ($(e.target).is('#helpModal')) $('#helpModal').fadeOut(200);
+        });
+
+        // Toggle Market Price Config Wrapper
+        $('#breakdownMats').on('change', function() {
+            if ($(this).is(':checked')) {
+                $('#marketPricesConfig').slideDown(200);
+            } else {
+                $('#marketPricesConfig').slideUp(200);
+            }
+        });
+
+        // Toggle Specific Inputs Based on Strategy
+        $('#strategy').on('change', function() {
+            let strat = $(this).val();
+            if (strat === 'guaranteed') {
+                $('#wrapBSB').slideDown(200);
+                $('#wrapBaseGear').slideUp(200);
+            } else if (strat === 'risk') {
+                $('#wrapBSB').slideUp(200);
+                $('#wrapBaseGear').slideDown(200);
+            } else {
+                $('#wrapBSB').slideUp(200);
+                $('#wrapBaseGear').slideUp(200);
+            }
+        });
+        
+        $('#strategy').trigger('change');
+
+        // Event trigger for calculation
+        $('.calc-input').on('change input', calculate);
+        calculate(); 
+    });
+
+    function calculate() {
+        let process = $('#gradeProcess').val();
+        let refine = parseInt($('#currentRefine').val());
+        let strategy = $('#strategy').val();
+        let breakdown = $('#breakdownMats').is(':checked');
+
+        // Update Dynamic Gem Label Based on Current Process
+        let requiredGemName = gemRequirementMap[process];
+        $('#labelGem').html(formatItemName(requiredGemName, true));
+
+        $('#directMaterialsContainer').empty();
+        $('#rawMaterialsContainer').empty();
+        $('#returnsList').empty();
+        $('#logContainer').empty();
+
+        if (isNaN(refine) || refine < 0) return;
+
+        if (breakdown) $('#rawCol').show();
+        else $('#rawCol').hide();
+
+        let matchingRules = gradingRules.filter(r => r.process === process && r.req_refine <= refine);
+        
+        if (matchingRules.length === 0) {
+            let minRefine = Math.min(...gradingRules.filter(r => r.process === process).map(r => r.req_refine));
+            return renderError(`Refine level +${refine} is too low to perform <strong>${process}</strong>. The minimum required refine is +${minRefine}.`);
+        }
+
+        let bestRuleReqRefine = matchingRules.sort((a,b) => b.req_refine - a.req_refine)[0].req_refine;
+
+        let rule;
+        if (strategy === 'safe') {
+            rule = matchingRules.find(r => r.req_refine === bestRuleReqRefine && r.is_safe === true);
+        } else {
+            rule = matchingRules.find(r => r.req_refine === bestRuleReqRefine && r.is_safe === false);
+        }
+
+        let base_chance = rule.base_chance;
+        let dust_per_10 = rule.dust_per_10;
+        let dust_for_100 = rule.dust_for_100;
+        let dust_returned = rule.dust_returned;
+
+        if (refine >= 16) {
+            base_chance += 0.10;
+            dust_returned += 1;
+            
+            let required_bonus = Math.max(0, 1.0 - base_chance);
+            let steps_of_10 = Math.round(required_bonus / 0.10);
+            dust_for_100 = steps_of_10 * dust_per_10;
+        }
+
+        let fails_avg = 0;
+        let mats_multiplier = 1;
+        let expected_dust_needed = 0;
+        let expected_returns = {};
+        let equipment_destroyed = 0;
+
+        if (strategy === 'guaranteed') {
+            fails_avg = 0; 
+            mats_multiplier = 1; 
+            expected_dust_needed = dust_for_100; 
+            
+        } else if (strategy === 'safe') {
+            fails_avg = (1 - base_chance) / base_chance;
+            mats_multiplier = 1 + fails_avg;
+            expected_returns['Blessed Etel Dust (1000337)'] = fails_avg * dust_returned;
+            
+        } else if (strategy === 'risk') {
+            fails_avg = (1 - base_chance) / base_chance;
+            mats_multiplier = 1 + fails_avg;
+            expected_returns['Blessed Etel Dust (1000337)'] = fails_avg * dust_returned;
+            equipment_destroyed = fails_avg;
+        }
+
+        let total_dir = {};
+        let total_raw = {};
+
+        for (let m of rule.mats) {
+            let amt = m.amount * mats_multiplier;
+            total_dir = addCost(total_dir, resolveBaseMaterials(m.material, amt, false));
+            total_raw = addCost(total_raw, resolveBaseMaterials(m.material, amt, breakdown));
+        }
+
+        if (expected_dust_needed > 0) {
+            total_dir = addCost(total_dir, resolveBaseMaterials('Blessed Etel Dust (1000337)', expected_dust_needed, false));
+            total_raw = addCost(total_raw, resolveBaseMaterials('Blessed Etel Dust (1000337)', expected_dust_needed, breakdown));
+        }
+
+        if (equipment_destroyed > 0) {
+            total_dir['Base Gear (Destroyed)'] = equipment_destroyed;
+            total_raw['Base Gear (Destroyed)'] = equipment_destroyed;
+        }
+
+        // Generate the standard HTML lists
+        $('#directMaterialsContainer').html(buildHTMLList(total_dir, false));
+        $('#rawMaterialsContainer').html(buildHTMLList(total_raw, false));
+
+        if (Object.keys(expected_returns).length > 0) {
+            $('#returnsList').html(buildHTMLList(expected_returns, true));
+            $('#returnsContainer').show();
+        } else {
+            $('#returnsContainer').hide();
+        }
+
+        // --- Grand Total Calculation ---
+        if (breakdown) {
+            // Strip out the commas mathematically before calculating!
+            let pBSB = parseInt($('#priceBSB').val().replace(/,/g, '')) || 0;
+            let pDust = parseInt($('#priceDust').val().replace(/,/g, '')) || 0;
+            let pGem = parseInt($('#priceGem').val().replace(/,/g, '')) || 0;
+            let pBase = parseInt($('#priceBase').val().replace(/,/g, '')) || 0;
+
+            let matsMarketCost = 0;
+            for (let k in total_raw) {
+                if (k === 'Zeny') continue;
+                let ceilVal = Math.ceil(total_raw[k]);
+                
+                if (strategy === 'guaranteed' && k.includes("Blacksmith's Blessing")) {
+                    matsMarketCost += ceilVal * pBSB;
+                }
+                else if (strategy === 'risk' && k.includes("Base Gear")) {
+                    matsMarketCost += ceilVal * pBase;
+                }
+                else if (k.includes("Etel Dust")) {
+                    matsMarketCost += ceilVal * pDust;
+                }
+                else if (k.includes("Aquamarine") || k.includes("Topaz") || k.includes("Amethyst") || k.includes("Amber")) {
+                    matsMarketCost += ceilVal * pGem;
+                }
+            }
+
+            let baseZeny = Math.round(total_dir['Zeny'] || 0);
+            let totalRawZeny = Math.round(total_raw['Zeny'] || 0);
+            let craftingZeny = totalRawZeny - baseZeny;
+            let grandTotal = totalRawZeny + matsMarketCost;
+
+            $('#grandTotalAmount').text(grandTotal.toLocaleString() + ' z');
+            $('#grandTotalBreakdown').html(`(Grading NPC Fee: ${baseZeny.toLocaleString()} z &nbsp;|&nbsp; Crafting Fee: ${craftingZeny.toLocaleString()} z &nbsp;|&nbsp; Market Items: ${matsMarketCost.toLocaleString()} z)`);
+            $('#grandTotalContainer').show();
+        } else {
+            $('#grandTotalContainer').hide();
+        }
+        
+        let logMsg = `<div style="margin-bottom: 6px;"><strong>Process:</strong> ${process} @ Refine +${refine}</div>`;
+        logMsg += `<div style="margin-bottom: 6px;"><strong>Base Success Chance:</strong> ${(base_chance * 100).toFixed(0)}% ${refine >= 16 ? ' <em style="color:var(--success-color);">(+16 Bonus Applied!)</em>' : ''}</div>`;
+        
+        if (strategy === 'guaranteed') {
+            let bonusAmount = ((1 - base_chance) * 100).toFixed(0);
+            logMsg += `<div style="margin-bottom: 6px; color: var(--success-color);"><strong>Bonus Success Chance:</strong> +${bonusAmount}% (Cost: ${dust_for_100}x Blessed Dust)</div>`;
+            logMsg += `<div style="margin-bottom: 6px;"><strong>Expected Failures:</strong> 0 (100% Guaranteed Success)</div>`;
+        } else {
+            logMsg += `<div style="margin-bottom: 6px; color: var(--muhro-accent);"><strong>Expected Failures Before Success:</strong> ${fails_avg.toFixed(2)}</div>`;
+            logMsg += `<div style="margin-bottom: 6px;"><strong>Penalty on Fail:</strong> ${rule.penalty}</div>`;
+        }
+        
+        $('#logContainer').html(logMsg);
+        $('#calculatorUI').fadeIn();
+    }
+
+    function renderError(msg) {
+        $('#directMaterialsContainer').html(`<div class="error-message">${msg}</div>`);
+        $('#rawMaterialsContainer').empty();
+        $('#rawCol').hide();
+        $('#grandTotalContainer').hide();
+        $('#returnsContainer').hide();
+        $('#logContainer').empty();
+        $('#calculatorUI').fadeIn();
+    }
+
+    function buildHTMLList(dataObj, isPositive = false) {
+        let keys = Object.keys(dataObj).sort((a,b) => {
+            if (a.includes('Base Gear')) return -1;
+            if (b.includes('Base Gear')) return 1;
+            if (a === 'Zeny') return -1;
+            if (b === 'Zeny') return 1;
+            return a.localeCompare(b);
+        });
+        
+        let html = '';
+        let hasData = false;
+        
+        let amountColor = isPositive ? 'var(--success-color)' : 'var(--muhro-accent)';
+        let prefix = isPositive ? '+' : '';
+        
+        keys.forEach(k => {
+            let rawVal = dataObj[k];
+            if (rawVal <= 0) return; 
+            
+            hasData = true;
+            let valStr = '';
+            
+            if (k === 'Zeny') {
+                valStr = Math.round(rawVal).toLocaleString() + ' z';
+            } else {
+                let ceilVal = Math.ceil(rawVal);
+                valStr = ceilVal.toLocaleString();
+            }
+            
+            // Re-using formatItemName for the list view but wrapped safely for flexbox
+            let displayItem = `<div class="material-name-container">${formatItemName(k, true)}</div>`;
+            
+            html += `
+                <div class="material-row">
+                    ${displayItem}
+                    <div style="font-weight: bold; color: ${amountColor}; margin-left: 10px; text-align: right; min-width: 60px;">${prefix}${valStr}</div>
+                </div>
+            `;
+        });
+        
+        if(!hasData) html = "<div style='padding: 10px; color: var(--text-muted);'>No materials needed.</div>";
+        return html;
+    }
+</script>
+
+</body>
+</html>
